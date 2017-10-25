@@ -1,5 +1,5 @@
 %load ./data/AAPL.csv;
-T = readtable('AAPL.csv','Format','%{yyyy-mm-dd}D%f%f%f%f%f%f');
+T = readtable('MSFT.csv','Format','%{yyyy-mm-dd}D%f%f%f%f%f%f');
 warning('OFF', 'MATLAB:table:ModifiedAndSavedVarnames')
 Date = table2array(T(:,1));
 Open = table2array(T(:,2));
@@ -37,7 +37,7 @@ end
 
 filledDate.Format = 'yyyy-MM-dd';
 newdata = [num2cell(visited) cellstr(filledDate)];
-dlmcell('AAPL',newdata,'\t');
+dlmcell('MSFT',newdata,'\t');
 
 %T1 = readtable('AAPL');
 
