@@ -19,7 +19,7 @@ nltk.download()
 url = 'https://raw.githubusercontent.com/hkundnani/TSA/master/data/twitter_feeds_apple_processed.csv'
 di = pd.read_csv(url, header = 0,engine = 'python', sep = '\,')
 
-df = di.ix[10,:]
+df = di.head(50)
 df['"Tweet content"'].fillna('Neutral', inplace = True)
 tweets = df['"Tweet content"'].tolist()
 for i,row in df.iterrows():
@@ -36,5 +36,5 @@ for i,row in df.iterrows():
            # df.ix[rows, '"Polarity"'] = ss['compound']
            df.set_value(i,'"Polarity"',ss['compound'])
         
-print (df.head(10))
+print (df.head(50))
     
