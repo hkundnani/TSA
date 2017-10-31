@@ -47,35 +47,3 @@ with open('Microsoft.csv','wb') as outputFile:
     wr = csv.writer(outputFile, dialect='excel')
     wr.writerows(final)
         
-    
-
-#data = pd.read_csv('C:/Users/Jarvis/Desktop/TSA/AAPL.csv',parse_dates=[0])
-#data['Date']=pd.to_datetime(data['Date'], format="%Y-%m-%d")
-#datelist = pd.date_range('2016-03-01', '2016-06-15',freq='D')
-#datelist.format(formatter=lambda x: x.strftime('%Y-%m-%d'))
-#data['Adj Close']=pd.to_numeric(data['Adj Close'])
-#
-#df=pd.DataFrame({'Date':datelist, 'Visited':0, 'Adj Close':0.0})
-##df=df.set_index('Date')
-#print(len(df))
-#
-#count = 0
-#for index, row in df.iterrows():
-#    if row['Date'] == data['Date'].iloc[count]:
-#        count = count + 1
-#        df[row['Visited']] = 1
-        
-    
-
-
-#count = 0
-#for i in range(len(df)):
-#    if df.Date[i] == data['Date'].iloc[count]:
-#        count = count + 1
-#        df.loc['Visited'][i]=1  
-        #datelist[i][2]=1
-        #print datelist[i]
-#    else:
-#        df.loc['Visited'][i]=0   
-
-#labels = ['Date','Visited','Adj Close']
