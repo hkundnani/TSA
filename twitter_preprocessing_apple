@@ -59,7 +59,7 @@ user_regex = re.compile(r"@(\w+)")
 def user_r(match):
 	return '__USER'#_'+match.group(1).upper()
 
-# URLs
+
 url_regex = re.compile(r"(http|https|ftp)://[a-zA-Z0-9\./]+")
 
 # Spliting by word boundaries
@@ -72,7 +72,6 @@ def rpt_r(match):
 
 
 
-# Punctuations
 punctuations = \
 	[	#('',		['.', ] )	,\
 		#('',		[',', ] )	,\
@@ -152,7 +151,7 @@ def processAll( 		text, subject='', query=[]):
 	
 
 	text = text.replace('\'','')
-	# FIXME: Jugad
+	
 
 	text = re.sub( word_bound_regex , punctuations_repl, text )
 	text = re.sub( rpt_regex, rpt_r, text )
