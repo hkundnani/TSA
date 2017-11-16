@@ -1,0 +1,199 @@
+
+
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Oct 31 16:28:26 2017
+
+@author: Ankita
+"""
+
+import pandas as pd
+import nltk
+from nltk import tokenize
+from nltk.sentiment import SentimentAnalyzer
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import re
+import csv
+
+
+
+
+
+url = 'https://raw.githubusercontent.com/hkundnani/TSA/master/data/twitter_feeds_apple_processed.csv'
+df = pd.read_csv(url, header = 0,engine = 'python', sep = '\,')
+newdf =  pd.DataFrame(columns=['Tweet_Id','Date','Hour','Tweet_Processed','Compound'])
+
+L = list()
+
+df['"Tweet content"'].fillna('Neutral', inplace = True)
+id_list = df['"Tweet Id"'].tolist()
+date_list = df['Date'].tolist()
+hour_list = df['Hour'].tolist()
+
+
+tweets = df['"Tweet content"'].tolist()
+
+'''for tweet in tweets:
+    for i,row in df.iterrows():
+
+            tweet = str(tweet)
+            tweet = re.sub(r'[/|?=#@$%&1234567890:()!.]', "", tweet)
+            # df.ix[row,'Tweet content'] = tweet
+            df.set_value(i,'"Tweet content"',tweet)
+        
+
+            sid = SentimentIntensityAnalyzer()
+            ss = sid.polarity_scores(tweet)
+            #print( ss['compound'] )
+            # df.ix[rows, '"Polarity"'] = ss['compound']
+            df.set_value(i,'"Polarity"',ss['compound'])
+        
+print (df)'''
+
+hash_regex = re.compile(r"#(\w+)")
+def hash_r(match):
+	return '__HASH_'+match.group(1).upper()
+
+
+user_regex = re.compile(r"@(\w+)")
+def user_r(match):
+	return '__USER'#_'+match.group(1).upper()
+
+
+url_regex = re.compile(r"(http|https|ftp)://[a-zA-Z0-9\./]+")
+
+# Spliting by word boundaries
+word_bound_regex = re.compile(r"\W+")
+
+
+rpt_regex = re.compile(r"(.)\1{1,}", re.IGNORECASE);
+def rpt_r(match):
+	return match.group(1)+match.group(1)
+
+
+
+punctuations = \
+	[	#('',		['.', ] )	,\
+		#('',		[',', ] )	,\
+		#('',		['\'', '\"', ] )	,\
+		('__PUNC_EXCL',		['!', '¡', ] )	,\
+		('__PUNC_QUES',		['?', '¿', ] )	,\
+		('__PUNC_ELLP',		['...', '…', ] )	,\
+		
+	]
+
+def print_config(cfg):
+	for (x, arr) in cfg:
+		print x, '\t',
+		for a in arr:
+			print a, '\t',
+		print ''
+
+
+def print_punctuations():
+	print_config(punctuations)
+
+
+def escape_paren(arr):
+	return [text.replace(')', '[)}\]]').replace('(', '[({\[]') for text in arr]
+
+def regex_union(arr):
+	return '(' + '|'.join( arr ) + ')'
+
+
+				
+
+#For punctuation replacement
+def punctuations_repl(match):
+	text = match.group(0)
+	repl = []
+	for (key, parr) in punctuations :
+		for punc in parr :
+			if punc in text:
+				repl.append(key)
+	if( len(repl)>0 ) :
+		return ' '+' '.join(repl)+' '
+	else :
+		return ' '
+
+def processHashtags( 	text, subject='', query=[]):
+	return re.sub( hash_regex, hash_r, text )
+
+def processHandles( 	text, subject='', query=[]):
+	return re.sub( user_regex, user_r, text )
+
+def processUrls( 		text, subject='', query=[]):
+	return re.sub( url_regex, ' __URL ', text )
+
+
+
+def processPunctuations( text, subject='', query=[]):
+	return re.sub( word_bound_regex , punctuations_repl, text )
+
+def processRepeatings( 	text, subject='', query=[]):
+	return re.sub( rpt_regex, rpt_r, text )
+
+def processQueryTerm( 	text, subject='', query=[]):
+	query_regex = "|".join([ re.escape(q) for q in query])
+	return re.sub( query_regex, '__QUER', text, flags=re.IGNORECASE )
+
+
+def processAll( 		text, subject='', query=[]):
+
+	if(len(query)>0):
+		query_regex = "|".join([ re.escape(q) for q in query])
+		text = re.sub( query_regex, '__QUER', text, flags=re.IGNORECASE )
+
+	text = re.sub( hash_regex, hash_r, text )
+	text = re.sub( user_regex, user_r, text )
+	text = re.sub( url_regex, ' __URL ', text )
+
+	
+
+	text = text.replace('\'','')
+	
+
+	text = re.sub( word_bound_regex , punctuations_repl, text )
+	text = re.sub( rpt_regex, rpt_r, text )
+
+	return text
+ 
+comp_list = []
+tweet_list = []
+neg_list=[]
+pos_list=[]
+neu_list=[]
+     
+for tweet in tweets: 
+       
+       tweet = str(tweet)
+       tweet1 = processHashtags(tweet)
+       tweet2 = processHandles(tweet1)
+       tweet3 = processUrls(tweet2)
+       
+       tweet5 = processPunctuations(tweet3)
+       tweet6 = processRepeatings(tweet5)
+       tweet7 = processAll(tweet6)
+       tweet_list.append(str(tweet7))
+       
+      # print(tweet7)  
+       sid = SentimentIntensityAnalyzer()
+       ss = sid.polarity_scores(tweet7)
+       
+       
+       comp_list.append(str(ss['compound']))
+       neg_list.append(str(ss['neg']))
+       pos_list.append(str(ss['pos']))
+       neu_list.append(str(ss['neu']))
+       
+       final = zip(id_list, date_list, hour_list, tweet_list, neg_list, pos_list,neu_list, comp_list)
+       
+       labels= ['ID', 'Date', 'Hour','Tweet', 'Negative','Positive','Neutral','Compound']
+       finaldf = pd.DataFrame.from_records(final, columns=labels)
+print(finaldf.head())
+      # values = pd.DataFrame(ss.items(), columns=['Type', 'Value'])
+      # print(values.head(5))
+with open('Apple.csv','wb') as outputFile:
+    wr = csv.writer(outputFile, dialect='excel')
+    wr.writerows(final)       
+               
