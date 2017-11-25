@@ -1,40 +1,92 @@
 import sys
+import pandas
+import csv
 import re
-import string
 
-# Function to write to a file 
-def write_file(file_name, data):
-	with open(file_name, 'w') as file:
-		for rows in data:
-			file.write(','.join(feature for feature in rows) + '\n')		
+if (len(sys.argv) < 3):
+	print ('You have given wrong number of arguments.')
+	print ('Please give arguments in follwing format: test.py input_file_name output_file_name')
+else:	
+	in_file = sys.argv[1]
+	out_file = sys.argv[2]
+	file = pandas.read_excel(in_file)
+	FORMAT = ['Date', 'Tweet content']
+	tweet_data = file[FORMAT]
 
-# Function to get file data into a list
-def gen_list(data):
-	count = 0
-	index = [1, 6]
-	pattern = re.compile('([^\s\w]|_)+')
-	dates = ["20160425", "20160426", "20160427"]
-	final_list = []
-	final_new_list = []
-	for row in data:
-		feature_list = []
-		if row:
-			split_list = row.split(',')
-			length = len(split_list)
-			for i in index:
-				if i <= length - 1 and split_list[i]:
-					feature_list.append(pattern.sub('', split_list[i]))
-				else:
-					feature_list.append(' ')
-			final_list.append(feature_list);
+	punctuations = \
+		[	#('',		['.', ] )	,\
+			#('',		[',', ] )	,\
+			#('',		['\'', '\"', ] )	,\
+			('__PUNC_EXCL',		['!', '¡', ] )	,\
+			('__PUNC_QUES',		['?', '¿', ] )	,\
+			('__PUNC_ELLP',		['...', '…', ] )	,\
+		]
 
-	for data in final_list:
-		if data[0] in dates:
-			final_new_list.append(data)
-	return final_new_list 
+	hash_regex = re.compile(r"#(\w+)")
+	def hash_r(match):
+		return '__HASH_'+match.group(1).upper()
 
-# Read input file
-rows_input = sys.stdin.read().splitlines()
-filtered_data = [data for data in rows_input if data]
-input_data = gen_list(filtered_data)
-write_file("twitter_feeds_apple_processed.txt", input_data)
+	def processHashtags(text):
+		return re.sub(hash_regex, hash_r, text)
+
+	user_regex = re.compile(r"@(\w+)")
+	def user_r(match):
+		return '__USER'
+
+	def processHandles(text):
+		return re.sub(user_regex, user_r, text)
+
+	url_regex = re.compile(r"(http|https|ftp)://[a-zA-Z0-9\./]+")
+	def processUrls(text):
+		return re.sub( url_regex, ' __URL ', text )
+
+	# Spliting by word boundaries
+	word_bound_regex = re.compile(r"\W+")
+
+	#For punctuation replacement
+	def punctuations_repl(match):
+		text = match.group(0)
+		repl = []
+		for (key, parr) in punctuations :
+			for punc in parr :
+				if punc in text:
+					repl.append(key)
+		if( len(repl)>0 ) :
+			return ' '+' '.join(repl)+' '
+		else :
+			return ' '
+
+	def processPunctuations(text):
+		return re.sub(word_bound_regex, punctuations_repl, text)
+
+	rpt_regex = re.compile(r"(.)\1{1,}", re.IGNORECASE);
+	def rpt_r(match):
+		return match.group(1)+match.group(1)
+
+	def processRepeatings(text):
+		return re.sub(rpt_regex, rpt_r, text)
+
+	def processAll(text, subject='', query=[]):
+
+		if(len(query)>0):
+			query_regex = "|".join([ re.escape(q) for q in query])
+			text = re.sub( query_regex, '__QUER', text, flags=re.IGNORECASE )
+
+		text = re.sub( hash_regex, hash_r, text )
+		text = re.sub( user_regex, user_r, text )
+		text = re.sub( url_regex, ' __URL ', text )
+
+		text = text.replace('\'','')
+		
+		text = re.sub( word_bound_regex , punctuations_repl, text )
+		text = re.sub( rpt_regex, rpt_r, text )
+
+		return text
+
+	tweet_list = []
+	for tweet in tweet_data['Tweet content']:
+		tweet1 = processAll(processRepeatings(processPunctuations(processUrls(processHandles(processHashtags(tweet))))))
+		tweet_list.append(tweet1)
+	tweet_data_new = tweet_data.drop('Tweet content', axis=1)
+	tweet_data_new = tweet_data_new.assign(tweet_content=pandas.Series(tweet_list).values)
+	tweet_data_new.to_csv(out_file, sep=',', encoding='utf-8')
