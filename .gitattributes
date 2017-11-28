@@ -3,4 +3,6 @@ original_djia/*.csv filter=lfs diff=lfs merge=lfs -text
 processed_djia/*.csv filter=lfs diff=lfs merge=lfs -text
 processed_tweets/*.csv filter=lfs diff=lfs merge=lfs -text
 tweets_sentiment_score/*.csv filter=lfs diff=lfs merge=lfs -text
+models/*.h5 filter=lfs diff=lfs merge=lfs -text
+tweets_emotion_class_probability/*.csv filter=lfs diff=lfs merge=lfs -text
 *.csv filter=lfs diff=lfs merge=lfs -text
