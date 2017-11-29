@@ -86,6 +86,7 @@ result['Label'].fillna(0.0, inplace = True)
 result.dropna(axis=0, inplace = True)
 
 
+train,test = train_test_split(result,test_size=0.2,random_state=10)# about random_state
 
 
 compound_list = train['Compound'].tolist()
