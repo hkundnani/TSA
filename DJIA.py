@@ -11,12 +11,14 @@ import pandas as pd
 import numpy as np
 from datetime import date, timedelta, datetime
 
-if (len(sys.argv) < 3):
+if (len(sys.argv) < 1):
     print ('You have given wrong number of arguments.')
     print ('Please give arguments in follwing format: test.py input_file_name output_file_name')
 else:
-    in_file = sys.argv[1]
-    out_file = sys.argv[2]
+    #in_file = sys.argv[1]
+    #out_file = sys.argv[2]
+    in_file = 'original_djia/MSFT.csv'
+    out_file = 'processed_djia/MSFT.csv'
     with open(in_file) as csvfile:
         next(csvfile)
         readCSV = csv.reader(csvfile)
@@ -53,22 +55,22 @@ else:
                 labellist.extend([1])
                 print("Done")
                 continue     
-            if adjCloseList[i]>=adjCloseList[i-1]:
+            if float(adjCloseList[i])>=float(adjCloseList[i-1]):
                 labellist.extend([1])
             else:
                 labellist.extend([0])
-                
+                       
                 
 
                 
-        final = zip(datelist,adjCloseList, labellist)
+        final = zip(datelist,adjCloseList,labellist)
         
      
         #print final[1][1]
         
         
         
-        with open(out_file,'w') as outputFile:
+        with open(out_file,'wb') as outputFile:
             wr = csv.writer(outputFile, dialect='excel')
             wr.writerows(final)
         
