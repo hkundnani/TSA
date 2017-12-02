@@ -1,5 +1,6 @@
 from sklearn import svm, datasets
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import cross_val_score
 import pandas as pd
 import pylab as pl
 from sklearn.metrics import classification_report,confusion_matrix
