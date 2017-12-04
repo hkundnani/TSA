@@ -4,14 +4,15 @@ from sklearn.model_selection import cross_val_score
 import pandas as pd
 import pylab as pl
 from sklearn.metrics import classification_report,confusion_matrix
+from sklearn.model_selection import ShuffleSplit
 import numpy as np
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.model_selection import GridSearchCV
 
-model = svm.SVC(kernel='rbf', C=1000000000.0, gamma=0.01)
+model = svm.SVC(kernel='rbf', C=1, gamma=0.0001)
 
-url1 = 'tweets_sentiment_score/AAPL_sentiment_score.csv'
-url2 = 'processed_djia/AAPL.csv'
+url1 = 'tweets_sentiment_score/MSFT_sentiment_score.csv'
+url2 = 'processed_djia/MSFT.csv'
 df = pd.read_csv(url1, header = 0,engine = 'python', sep = '\,')
 djia = pd.read_csv(url2, header = None,engine = 'python', sep = '\,')
 
@@ -19,13 +20,9 @@ djia.columns= ['Date', 'Adjvalue', 'Label']
 
 label = ['Date', 'Compound']
 testdf = pd.DataFrame.from_records(df, columns = label)
-# testdf['Date'].dropna(inplace = True)
-# testdf[['Compound']] = testdf[['Compound']].astype(float)
 
 testdf = testdf[testdf.Compound != 0.0000]
 newtestdf = testdf.groupby('Date').mean().reset_index()
-
-# newtestdf['Date'] = newtestdf['Date'].astype(str)
 
 result = pd.merge(djia, newtestdf, how = 'outer', on=['Date'])
 
@@ -49,35 +46,28 @@ final_list = zip(date_list, adj_list, label_list, complist, c)
 label = ['Date', 'Adjvalue', 'Label', 'Compound', 'Prev3comp']
 final_dframe = pd.DataFrame.from_records(final_list, columns = label)
 result = final_dframe[final_dframe.Prev3comp != 0.0000]
-
 # print (result)
+train, test = train_test_split(result, test_size=0.2, random_state=42)
 
 # C_range = np.logspace(-2, 10, 13)
 # gamma_range = np.logspace(-9, 3, 13)
-# param_grid = dict(gamma=gamma_range, C=C_range)
+# param_grid = dict(gamma=[1e-4, 1e-3, 0.01, 0.1, 0.2, 0.5], C=[1])
+# param_grid = dict(gamma=gamma_range, C=[1])
+# param_grid = dict(gamma=[2**-15, 2**-13, 2**-11, 2**-9, 2**-7, 2**-5, 2**-3, 2**-1, 2**1, 2**3], C=[1])
 # cv = StratifiedShuffleSplit(n_splits=5, test_size=0.2, random_state=42)
 # grid = GridSearchCV(svm.SVC(), param_grid=param_grid, cv=cv)
-# grid.fit(result['Prev3comp'].values.reshape(len(result['Prev3comp']),1), result['Label'])
+# grid.fit(train['Prev3comp'].values.reshape(len(train['Prev3comp']),1), train['Label'])
 
 # print("The best parameters are %s with a score of %0.2f"
 #       % (grid.best_params_, grid.best_score_))
 
-train,test = train_test_split(result,test_size=0.2, random_state=42)# about random_state
-
-
-# compound_list = train['Compound'].tolist()
-# label_list = train['Compound'].tolist()
+# print(cross_val_score(grid, final_dframe['Prev3comp'].values.reshape(len(final_dframe['Prev3comp']),1), final_dframe['Label']))
 
 fit = model.fit(train['Prev3comp'].values.reshape(len(train['Prev3comp']),1), train['Label'])
 
 y_pred = model.predict(test['Prev3comp'].values.reshape(len(test['Prev3comp']),1))
 
-print(y_pred)
-print(test['Label'])
-
 print (model.score(test['Prev3comp'].values.reshape(len(test['Prev3comp']),1), test['Label']))
 
-# pl.plot(train['Compound'].values, train['Label'].values)
-# pl.show()
 # print (confusion_matrix(test['Label'], y_pred))
 # print (classification_report(test['Label'], y_pred))
