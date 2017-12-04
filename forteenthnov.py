@@ -28,9 +28,14 @@ from sklearn.metrics import roc_curve, auc
 classifier =  LogisticRegression(C=32.0)
  
 
+<<<<<<< Updated upstream
 url1 = 'tweets_sentiment_score/CSCO_sentiment_score.csv'
 url2 = 'processed_djia/CSCO.csv'
 
+=======
+url1 = 'tweets_sentiment_score/AAPL_sentiment_score.csv'
+url2 = 'processed_djia/AAPL.csv'
+>>>>>>> Stashed changes
 df = pd.read_csv(url1, header = 0,engine = 'python', sep = '\,')
 djia = pd.read_csv(url2, header = None,engine = 'python', sep = '\,')
 
@@ -77,7 +82,7 @@ final_dframe = pd.DataFrame.from_records(final_list, columns = label)
 final_dframe = final_dframe[final_dframe.Compound != 0.0000]
 # print(final_dframe)
 
-train, test = train_test_split(final_dframe, test_size=0.3, random_state=10)
+train, test = train_test_split(final_dframe, test_size=0.2, random_state=20)
 
 # C_range = np.logspace(-2, 10, 13)
 # param_grid = dict(C=[1, 10, 100, 1000])
@@ -103,10 +108,15 @@ print(test['Label'])
 #actual=test['Label']
 #prediction=y_pred
 
-false_positive_rate, true_positive_rate, thresholds = roc_curve(test['Label'].reshape(len(test['Label']),1),y_pred)
-roc_auc = auc(false_positive_rate, true_positive_rate)
+y_test = test['Label'].reshape(len(test['Label']),1)
+print (y_test.ravel())
+print (y_pred)
+fpr, tpr, thresholds = roc_curve(y_test.ravel(),y_pred)
+print (fpr)
+print (tpr)
+roc_auc = auc(fpr, tpr) #Compute Area Under the Curve (AUC) using the trapezoidal rule
 plt.title('Receiver Operating Characteristic')
-plt.plot(false_positive_rate, true_positive_rate, 'b', label='AUC = %0.2f'% roc_auc)
+plt.plot(fpr, tpr, 'b', label='AUC = %0.4f'% roc_auc)
 plt.legend(loc='lower right')
 plt.plot([0,1],[0,1],'r--')
 plt.xlim([-0.1,1.2])
@@ -115,10 +125,5 @@ plt.ylabel('True Positive Rate')
 plt.xlabel('False Positive Rate')
 plt.show()
 
-A = train['Prev3comp'].reshape(len(train['Prev3comp']),1)
-B = train['Label']
-
-plt.scatter(A,B,c='indianred',s=5)
-#plt.scatter(y_pred, y_pred-test['Label'],c='b')
 
 print(accuracy)

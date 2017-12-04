@@ -11,6 +11,7 @@ from sklearn.cross_validation import train_test_split
 from sklearn.linear_model import LinearRegression
 
 
+
 url1 = 'tweets_sentiment_score/CSCO_sentiment_score.csv'
 url2 = 'processed_djia/CSCO.csv'
 df = pd.read_csv(url1, header = 0,engine = 'python', sep = '\,')
