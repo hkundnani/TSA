@@ -31,7 +31,16 @@ else:
 	result = pd.merge(djia_pro, tweets, how = 'outer', on=['Date'])
 	result = result[pd.notnull(result['Compound'])]
 	scaler = MinMaxScaler(feature_range=(0, 1))
-	rescaled_djia = scaler.fit_transform(result['adj_close'].values.reshape(len(result['adj_close']), 1))
+	# print (result)
+
+	result['Date'] = pd.to_datetime(result['Date'])
+	mask = (result['Date'] > '2016-05-15') & (result['Date'] <= '2016-05-22')
+	result = result.loc[mask]
+	result['Date'] = result['Date'].dt.strftime('%Y-%m-%d')
+	
+	result['adj_close'] = scaler.fit_transform(result['adj_close'].values.reshape(len(result['adj_close']), 1))
+	result['Compound'] = scaler.fit_transform(result['Compound'].values.reshape(len(result['Compound']), 1))
+	 
 	print (result)
 	
 	# file3['Date'] = (pd.to_datetime(file1['Date'], errors='coerce')).dt.strftime('%Y-%m-%d')
@@ -48,8 +57,8 @@ else:
 	# pl.plot(file_pb['Date'], file_pb['Confusion'], 'c')
 
 	# pl.subplot(2, 1, 2)
-	pl.ylim(-0.5, 1.5)
-	pl.plot(result['Date'], rescaled_djia[:, 0], 'r')
+	pl.ylim(0, 1)
+	pl.plot(result['Date'], result['adj_close'], 'r')
 	pl.plot(result['Date'], result['Compound'], 'b')
 	pl.xticks(rotation=45)
 	# pl.ylim(0, 1)

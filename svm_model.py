@@ -11,10 +11,10 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import roc_curve, auc
 import matplotlib.pyplot as plt
 
-model = svm.SVC(kernel='rbf', C=1, gamma=0.0001)
+model = svm.SVC(kernel='rbf', C=10000000.0, gamma=1.0)
 
-url1 = 'tweets_sentiment_score/MSFT_sentiment_score.csv'
-url2 = 'processed_djia/MSFT.csv'
+url1 = 'tweets_sentiment_score/AAPL_sentiment_score.csv'
+url2 = 'processed_djia/AAPL.csv'
 df = pd.read_csv(url1, header = 0,engine = 'python', sep = '\,')
 djia = pd.read_csv(url2, header = None,engine = 'python', sep = '\,')
 

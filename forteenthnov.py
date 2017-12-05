@@ -25,11 +25,11 @@ from sklearn.metrics import roc_curve, auc
 import matplotlib.pyplot as plt
 #import ggplot
 
-classifier =  LogisticRegression(C=32.0)
+classifier =  LogisticRegression(C=100.0)
  
 
-url1 = 'tweets_sentiment_score/CSCO_sentiment_score.csv'
-url2 = 'processed_djia/CSCO.csv'
+url1 = 'tweets_sentiment_score/AAPL_sentiment_score.csv'
+url2 = 'processed_djia/AAPL.csv'
 
 df = pd.read_csv(url1, header = 0,engine = 'python', sep = '\,')
 djia = pd.read_csv(url2, header = None,engine = 'python', sep = '\,')
@@ -93,17 +93,17 @@ train, test = train_test_split(final_dframe, test_size=0.3, random_state=10)
 # print(cross_val_score(grid, final_dframe['Prev3comp'].values.reshape(len(final_dframe['Prev3comp']),1), final_dframe['Label']))
 
 
-fit = classifier.fit(train['Prev3comp'].reshape(len(train['Prev3comp']),1), train['Label'])
-y_pred = classifier.predict(test['Prev3comp'].reshape(len(test['Prev3comp']),1))
-print('Accuracy of logistic regression classifier on test set: {:.2f}'.format(classifier.score(test['Prev3comp'].reshape(len(test['Prev3comp']),1),test['Label'].reshape(len(test['Label']),1) )))
-accuracy = accuracy_score(y_pred,test['Label'].reshape(len(test['Label'])))
+fit = classifier.fit(train['Prev3comp'].values.reshape(len(train['Prev3comp']),1), train['Label'])
+y_pred = classifier.predict(test['Prev3comp'].values.reshape(len(test['Prev3comp']),1))
+print('Accuracy of logistic regression classifier on test set: {:.2f}'.format(classifier.score(test['Prev3comp'].values.reshape(len(test['Prev3comp']),1),test['Label'].values.reshape(len(test['Label']),1) )))
+accuracy = accuracy_score(y_pred,test['Label'].values.reshape(len(test['Label'])))
 print(y_pred)
 print(test['Label'])
 
 #actual=test['Label']
 #prediction=y_pred
 
-false_positive_rate, true_positive_rate, thresholds = roc_curve(test['Label'].reshape(len(test['Label']),1),y_pred)
+false_positive_rate, true_positive_rate, thresholds = roc_curve(test['Label'].values.reshape(len(test['Label']),1),y_pred)
 roc_auc = auc(false_positive_rate, true_positive_rate)
 plt.title('Receiver Operating Characteristic')
 plt.plot(false_positive_rate, true_positive_rate, 'b', label='AUC = %0.2f'% roc_auc)
