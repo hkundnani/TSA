@@ -9,4 +9,6 @@ orig_tweets_class_prob/*.csv filter=lfs diff=lfs merge=lfs -text
 orig_tweets_ekma_scores/*.csv filter=lfs diff=lfs merge=lfs -text
 orig_tweets_ekma_scores/*.csv filter=lfs diff=lfs merge=lfs -text
 tweets_ekman_scores/*.csv filter=lfs diff=lfs merge=lfs -text
+final_processed_compound/*.csv filter=lfs diff=lfs merge=lfs -text
+tweets_processed_moods/*.csv filter=lfs diff=lfs merge=lfs -text
 *.csv filter=lfs diff=lfs merge=lfs -text
