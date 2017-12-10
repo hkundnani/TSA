@@ -1,7 +1,9 @@
 import pip
 pip.main(["install", "scikit-learn"])
 pip.main(["install", "pandas"])
+pip.main(["install", "scipy"])
 pip.main(["install", "matplotlib"])
+
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
@@ -12,7 +14,6 @@ from sklearn.metrics import roc_curve, auc
 import matplotlib.pyplot as plt
 from sklearn import svm
 import pandas as pd
-import pylab as plt
 
 # Function to read the CSV file
 def read_file(file_name):
