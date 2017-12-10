@@ -12,7 +12,7 @@ else:
 	file = pandas.read_excel(in_file)
 	FORMAT = ['Date', 'Tweet content']
 	tweet_data = file[FORMAT]
-
+	#removing punctuations
 	punctuations = \
 		[	#('',		['.', ] )	,\
 			#('',		[',', ] )	,\
@@ -21,14 +21,14 @@ else:
 			('__PUNC_QUES',		['?', '¿', ] )	,\
 			('__PUNC_ELLP',		['...', '…', ] )	,\
 		]
-
+	#removing hashtags
 	hash_regex = re.compile(r"#(\w+)")
 	def hash_r(match):
 		return '__HASH_'+match.group(1).upper()
 
 	def processHashtags(text):
 		return re.sub(hash_regex, hash_r, text)
-
+	#removing user handles
 	user_regex = re.compile(r"@(\w+)")
 	def user_r(match):
 		return '__USER'
@@ -58,7 +58,7 @@ else:
 
 	def processPunctuations(text):
 		return re.sub(word_bound_regex, punctuations_repl, text)
-
+	#removing repeated words
 	rpt_regex = re.compile(r"(.)\1{1,}", re.IGNORECASE);
 	def rpt_r(match):
 		return match.group(1)+match.group(1)
