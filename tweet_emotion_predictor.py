@@ -1,3 +1,4 @@
+#Predict the emotion present in a tweet based on Ekman classification
 import pandas as pd
 import sys
 from emotion_predictor import EmotionPredictor
