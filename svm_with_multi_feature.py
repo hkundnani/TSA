@@ -1,3 +1,4 @@
+# For a multi feature set, generate the corresponding SVM and Logistic Regression for it
 from sklearn import svm, datasets
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
@@ -115,17 +116,3 @@ print (model.score(test_mood_list, test_label_list))
 # print (confusion_matrix(test['Label'], y_pred))
 # print (classification_report(test['Label'], y_pred))
 
-#AAPL 0.01
-#MSFT 0.01
-#CSCO 10000
-#INTC 0.01
-
-#AAPL 1
-#MSFT 1
-#CSCO 1000
-#INTC 1
-
-#AAPL 0.03125
-#MSFT 128
-#CSCO 32768
-#INTC 0.03125
