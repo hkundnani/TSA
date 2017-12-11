@@ -1,3 +1,4 @@
+#using Vader from NLTK library, we find the polarity scores and label them based on the scores. 
 import sys
 import pandas as pd
 import nltk
