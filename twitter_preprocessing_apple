@@ -1,5 +1,5 @@
 
-
+#Code to preprocess the tweets. Handles and URL are replaced. Repeated words and numbers are removed.
 # -*- coding: utf-8 -*-
 """
 Created on Tue Oct 31 16:28:26 2017
