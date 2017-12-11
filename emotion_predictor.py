@@ -1,3 +1,4 @@
+#Using Keras model to predict the emotion score
 import html
 import pickle
 import re
