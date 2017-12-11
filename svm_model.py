@@ -1,3 +1,4 @@
+#for the compound score model, generate the SVM
 from sklearn import svm
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
@@ -75,7 +76,7 @@ print (model.score(test['Prev3comp'].values.reshape(len(test['Prev3comp']),1), t
 # print (classification_report(test['Label'], y_pred))
 
 
-
+#ROC Curve
 false_positive_rate, true_positive_rate, thresholds = roc_curve(test['Label'].reshape(len(test['Label']),1),y_pred)
 roc_auc = auc(false_positive_rate, true_positive_rate)
 plt.title('Receiver Operating Characteristic')
