@@ -1,3 +1,4 @@
+#DJIA preprecoessing. If for a given date, Adj_Close value is missing, use the concave function to fill them.
 # -*- coding: utf-8 -*-
 """
 Created on Thu Oct 26 15:19:03 2017
@@ -39,6 +40,7 @@ else:
             date_string = single_date.strftime('%Y-%m-%d')
             datelist.append(date_string)
             
+        #Concave function to fill the missing Adj_close value
         j = 0
         adjCloseList = []
         labellist = []
@@ -49,7 +51,7 @@ else:
             else:
                 adjCloseList.append(str((float(adjCloseList[i-1])+float(adj_close[j]))/2))
                 
-        
+        #Label based on increase or decrease
         for i in range(len(adjCloseList)):
             if i == 0:
                 labellist.extend([1])
@@ -69,7 +71,7 @@ else:
         #print final[1][1]
         
         
-        
+        #Write to file
         with open(out_file,'wb') as outputFile:
             wr = csv.writer(outputFile, dialect='excel')
             wr.writerows(final)
