@@ -1,3 +1,4 @@
+#Plot Adj_Close vs Compound Score based on dates
 import numpy as np
 import pandas as pd
 import pylab as pl
