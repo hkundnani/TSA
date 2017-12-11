@@ -1,3 +1,4 @@
+#Calculate the accuracy using Logistic Regression and plot the ROC curve
 # -*- coding: utf-8 -*-
 """
 Created on Tue Oct 31 16:28:26 2017
@@ -51,6 +52,7 @@ newtestdf['Date'] = newtestdf['Date'].astype(str)
 #print(newtestdf['Date','Compound'])
 #print(djia['Date','Adjvalue','Label'])
 
+#merge two different DataFrame on Date
 result = pd.merge(djia, newtestdf, how = 'outer', on=['Date'])
 
 result['Compound'].fillna(0.0, inplace = True)
@@ -60,6 +62,7 @@ result.dropna(axis=0, inplace = True)
 
 c =[]
 
+#Compute the Compound score based on previous 3 days
 complist = result['Compound'].tolist()
 for i in range(len(complist)):
     if i<3:
@@ -92,7 +95,7 @@ train, test = train_test_split(final_dframe, test_size=0.3, random_state=10)
 
 # print(cross_val_score(grid, final_dframe['Prev3comp'].values.reshape(len(final_dframe['Prev3comp']),1), final_dframe['Label']))
 
-
+#Train and test the model
 fit = classifier.fit(train['Prev3comp'].values.reshape(len(train['Prev3comp']),1), train['Label'])
 y_pred = classifier.predict(test['Prev3comp'].values.reshape(len(test['Prev3comp']),1))
 print('Accuracy of logistic regression classifier on test set: {:.2f}'.format(classifier.score(test['Prev3comp'].values.reshape(len(test['Prev3comp']),1),test['Label'].values.reshape(len(test['Label']),1) )))
@@ -103,6 +106,7 @@ print(test['Label'])
 #actual=test['Label']
 #prediction=y_pred
 
+#ROC Curve generation
 false_positive_rate, true_positive_rate, thresholds = roc_curve(test['Label'].values.reshape(len(test['Label']),1),y_pred)
 roc_auc = auc(false_positive_rate, true_positive_rate)
 plt.title('Receiver Operating Characteristic')
